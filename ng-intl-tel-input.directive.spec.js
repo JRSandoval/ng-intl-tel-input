@@ -153,4 +153,26 @@ describe('ng-intl-tel-input', function () {
     $scope.$digest();
     expect($scope.model.selectedCountry.iso2).toEqual('us');
   }));
+
+  it('should change selected country when selected country data has changed and vice versa', inject(function ($compile) {
+    $scope.model.selectedCountry = null;
+    doc = angular.element(
+      '<form name="form">' +
+      '<input ng-model="model.tel" type="text" name="tel" ng-intl-tel-input data-selected-country="model.selectedCountry" />' +
+      '</form>'
+    );
+    $compile(doc)($scope);
+
+    var element = doc.find('input').eq(0);
+    var newCountry = {name : 'Singapore', iso2 : 'sg'};
+
+    $scope.model.selectedCountry = newCountry;
+
+    $scope.$digest();
+    expect(element.intlTelInput('getSelectedCountryData').iso2).toEqual(newCountry.iso2);
+
+    element.intlTelInput('setCountry', 'us');
+    $scope.$digest();
+    expect($scope.model.selectedCountry.iso2, 'us');
+  }));
 });
