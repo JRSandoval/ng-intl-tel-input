@@ -42,6 +42,7 @@ angular.module('ngIntlTelInput')
           }
           // Initialize.
           ngIntlTelInput.init(elm);
+
           // Set Selected Country Data.
           function setSelectedCountryData(model) {
             var getter = $parse(model);
@@ -50,7 +51,7 @@ angular.module('ngIntlTelInput')
           }
           // Handle Country Changes.
           function handleCountryChange() {
-            setSelectedCountryData(attr.selectedCountry);
+            scope.$evalAsync(setSelectedCountryData(attr.selectedCountry));
           }
           // Country Change cleanup.
           function cleanUp() {
@@ -60,6 +61,11 @@ angular.module('ngIntlTelInput')
           if (attr.selectedCountry) {
             setSelectedCountryData(attr.selectedCountry);
             angular.element($window).on('countrychange', handleCountryChange);
+            scope.$watch(attr.selectedCountry, function(newCountry){
+              if(newCountry.iso2){
+                elm.intlTelInput('setCountry', newCountry.iso2);
+              }
+            });
             scope.$on('$destroy', cleanUp);
           }
           // Validation.
